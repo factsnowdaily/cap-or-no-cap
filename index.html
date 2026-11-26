@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14102b">
+<title>Cap or No Cap</title>
+<meta property="og:title" content="Cap or No Cap - True or Myth?">
+<meta property="og:description" content="Facts everyone gets wrong. Can you beat it?">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(circle at 20% 0%,#3b2a8c 0,#14102b 55%);color:#fff;font-family:system-ui,"Segoe UI",Roboto,"Noto Sans Arabic",Tahoma,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;min-height:100%;padding:max(16px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex}
+h1{margin:0;font-size:2.4rem;line-height:1.15}
+.logo{font-weight:900;letter-spacing:-1px}
+.logo b{color:#ffd23f}
+.center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px}
+.sub{opacity:.8;font-size:1.05rem;line-height:1.6}
+.btn{border:0;border-radius:18px;padding:16px 22px;font:inherit;font-weight:800;font-size:1.2rem;color:#14102b;background:#ffd23f;cursor:pointer;width:100%;box-shadow:0 5px 0 #b8941c;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b8941c}
+.btn.alt{background:#2a2250;color:#fff;box-shadow:0 5px 0 #1a1438}
+.btn.green{background:#2ee59d;box-shadow:0 5px 0 #17a06d}
+.btn.red{background:#ff5a6e;box-shadow:0 5px 0 #b82e40;color:#fff}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:10px}
+.pill{background:#2a2250;border-radius:99px;padding:6px 14px;font-size:.95rem}
+.bar{height:8px;background:#2a2250;border-radius:9px;overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;width:0;background:#ffd23f;transition:width .3s}
+.card{background:#211a45;border:2px solid #3a2f73;border-radius:24px;padding:28px 20px;font-size:1.45rem;line-height:1.7;font-weight:700;text-align:center;min-height:210px;display:flex;align-items:center;justify-content:center;transition:border-color .2s,background .2s}
+.card.ok{border-color:#2ee59d;background:#12372f}
+.card.bad{border-color:#ff5a6e;background:#3a1a2a}
+.card.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.fb{margin-top:16px;min-height:120px;text-align:center}
+.fb h2{margin:0 0 6px;font-size:1.5rem}
+.fb p{margin:0 0 14px;line-height:1.7;opacity:.92}
+.big{font-size:4.5rem;font-weight:900;color:#ffd23f}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.stat{background:#211a45;border-radius:16px;padding:12px}
+.stat b{display:block;font-size:1.6rem;color:#ffd23f}
+.stack{display:flex;flex-direction:column;gap:12px;width:100%}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+ <section id="s-home" class="screen on">
+  <div class="center">
+   <div class="logo" style="font-size:3rem">Cap or <b>No Cap</b></div>
+   <h1 data-i="tag"></h1>
+   <p class="sub" data-i="intro"></p>
+   <div class="stats"><div class="stat"><b id="h-best">0</b><span data-i="best"></span></div><div class="stat"><b id="h-streak">0</b><span data-i="streak"></span></div></div>
+   <div class="stack"><button class="btn" id="play"><span data-i="play"></span></button></div>
+  </div>
+ </section>
+ <section id="s-game" class="screen">
+  <div class="top"><span class="pill" id="g-n">1/10</span><span class="pill">🔥 <span id="g-streak">0</span></span><span class="pill">⭐ <span id="g-score">0</span></span></div>
+  <div class="bar"><i id="g-bar"></i></div>
+  <div class="card" id="card"><span id="q"></span></div>
+  <div class="answers" id="answers">
+   <button class="btn green" id="b-true"><span data-i="nocap"></span> ✅</button>
+   <button class="btn red" id="b-false"><span data-i="cap"></span> ❌</button>
+  </div>
+  <div class="fb hidden" id="fb"><h2 id="fb-t"></h2><p id="fb-p"></p><button class="btn" id="next"></button></div>
+ </section>
+ <section id="s-end" class="screen">
+  <div class="center">
+   <div class="sub" data-i="yours"></div>
+   <div class="big"><span id="e-score">0</span>/10</div>
+   <h1 id="e-rank"></h1>
+   <p class="sub" id="e-msg"></p>
+   <div class="stats"><div class="stat"><b id="e-streak">0</b><span data-i="streak"></span></div><div class="stat"><b id="e-best">0</b><span data-i="best"></span></div></div>
+   <div class="stack">
+    <button class="btn green" id="share"><span data-i="share"></span> 💬</button>
+    <button class="btn" id="again"><span data-i="again"></span></button>
+   </div>
+  </div>
+ </section>
+</div>
+<script>
+// Each item: [statement, isTrue, explanation]. Add a translation by adding another QUESTIONS.<lang> array in the same order.
+const QUESTIONS={en:[
+["The pyramids of Giza were built by slaves.",false,"Excavated workers' tombs and bakeries show they were paid Egyptian laborers who got food and medical care."],
+["You can see the Great Wall of China with the naked eye from space.",false,"Astronauts say it's basically invisible from orbit. It's too narrow and the same color as the land around it."],
+["Honey never goes bad if you store it properly.",true,"Edible honey has been found in ancient tombs. Very little water and high acidity stop bacteria from growing."],
+["Lightning never strikes the same place twice.",false,"The Empire State Building gets hit about 20 times a year."],
+["Goldfish only have a 3-second memory.",false,"Studies show they remember things for months and can learn feeding times."],
+["We only use 10% of our brains.",false,"Brain scans show we use virtually all of it, even while sleeping."],
+["Octopuses have three hearts.",true,"Two pump blood through the gills and one pumps it to the rest of the body. Their blood is blue too."],
+["Botanically, a banana is a berry but a strawberry is not.",true,"A berry grows from a single flower ovary with seeds inside. Bananas fit. Strawberries are 'aggregate' fruits."],
+["Elephants are terrified of mice.",false,"No evidence for it. Elephants get spooked by sudden things, not mice in particular."],
+["Ostriches bury their heads in the sand when scared.",false,"They lower their heads to turn their eggs in the nest or to eat, which is where the myth comes from."],
+["Different parts of your tongue taste different flavors, like sweet at the tip and bitter at the back.",false,"The tongue map is wrong. Every taste can be detected across the whole tongue."],
+["Cleopatra lived closer in time to the Moon landing than to the building of the Great Pyramid.",true,"The Great Pyramid was built around 2560 BC. Cleopatra lived around 30 BC, about 2,500 years later. The Moon landing is about 2,000 years after her."],
+["Cleopatra was ethnically Egyptian.",false,"She came from the Ptolemaic dynasty, which was Macedonian Greek. She was the first of her family to learn Egyptian."],
+["Napoleon was unusually short.",false,"He was about 5'7\" (169 cm), average or slightly above for his time. French and English units, plus British cartoons, created the myth."],
+["Einstein failed math in school.",false,"He was great at math and learned calculus by around 15. He said himself he never failed."],
+["Vitamin C prevents colds.",false,"It may shorten a cold slightly, but for most people it doesn't stop you from catching one."],
+["Blood inside your veins is blue until it touches oxygen.",false,"Blood is always red. It's darker when it has less oxygen, and veins look blue because of how skin filters light."],
+["Bats are blind.",false,"All bat species can see, and some see very well. Many also use echolocation in the dark."],
+["On Venus, a day is longer than a year.",true,"It spins once every 243 Earth days but orbits the Sun every 225 Earth days."],
+["The Sun is yellow.",false,"It's actually white. Earth's atmosphere scatters blue light and makes it look yellow."],
+["Sound can travel through the vacuum of space.",false,"Sound needs a medium like air or water. Space is basically empty, so it's silent."],
+["The Sahara is the largest desert in the world.",false,"Antarctica is. A desert means very little rain, not heat."],
+["Hair and fingernails keep growing after death.",false,"The skin shrinks and pulls back, so they look longer. There is no real growth."],
+["Dogs see the world in black and white.",false,"They see colors, just fewer than we do. Mostly blues and yellows, not red and green."],
+["Bulls get angry at the color red.",false,"Bulls can't tell red apart. The movement of the cape is what triggers them."],
+["Dolphins sleep with half their brain at a time.",true,"One half rests while the other stays alert so they can keep surfacing to breathe."],
+["Camels store water in their humps.",false,"The humps are fat. Camels handle thirst in other ways inside their bodies."],
+["You swallow about 8 spiders a year in your sleep.",false,"That one was spread around the internet. Spiders avoid sleeping humans, and there's no evidence for it."],
+["A tomato is scientifically a fruit.",true,"Botanically, a fruit grows from a flower and holds seeds. Tomatoes fit."],
+["Ancient Egyptians removed the brain through the nose during mummification.",true,"They used a metal hook. They thought the heart was the center of thought, not the brain."],
+["The Suez Canal opened to ships in 1869.",true,"It officially opened in November 1869 and changed world trade."],
+["The Great Pyramid was the tallest man-made structure in the world for about 3,800 years.",true,"Until Lincoln Cathedral in England was finished around 1311."],
+["Babies are born with more bones than adults.",true,"A baby has around 270 or more bones. Many fuse together, leaving adults with 206."],
+["Earth is closer to the Sun in summer and farther in winter.",false,"Seasons come from Earth's tilt, not distance. Earth is actually closest to the Sun in early January."],
+["The shortest war in history lasted about 40 minutes.",true,"The Anglo-Zanzibar War of 1896 lasted roughly 38 to 45 minutes."],
+["Shaving makes hair grow back thicker and darker.",false,"Shaving doesn't change thickness or color. New hair just feels coarser because the tip is blunt."],
+["Cracking your knuckles gives you arthritis.",false,"Studies haven't linked the two. The pop comes from gas bubbles in the joint fluid."],
+["You must wait 30 minutes after eating before swimming or you'll drown.",false,"No evidence for that. You might feel heavy after a big meal, but it isn't a drowning risk."],
+["Using your phone at a gas station can set off a fire.",false,"No documented case has been caused by a phone. Static electricity from your body is a bigger, though still rare, risk."],
+["Charging your phone overnight ruins the battery.",false,"Modern phones stop charging at 100%. Heat is what really wears a battery out."],
+["Putting a wet phone in rice saves it.",false,"Rice absorbs very little moisture. It's better to turn it off, let it air dry, and get it checked."],
+["Incognito mode hides your activity from your internet provider.",false,"It only stops your own device from saving history. Your provider and the websites can still see you."],
+["Macs can't get viruses.",false,"Apple computers get malware too. They are just targeted less often than Windows."],
+["The Internet and the World Wide Web are the same thing.",false,"The Internet is the network of connected devices. The Web is one service running on top of it, like email and apps."],
+["The first website ever was created at CERN by Tim Berners-Lee.",true,"It went up in 1991 and explained what the Web was."],
+["Your heart stops for a moment when you sneeze.",false,"Your heart keeps beating. The feeling comes from pressure changes in your chest."],
+["There are more pyramids in Sudan than in Egypt.",true,"Sudan has over 200 Nubian pyramids. Egypt has about 120, though they are bigger."],
+["Lions are 'king of the jungle' and live in jungles.",false,"Lions live in savannas and grasslands, not rainforests."],
+["Bananas are slightly radioactive.",true,"They contain potassium-40. The dose is tiny and harmless."],
+["Penguins live at the North Pole.",false,"Penguins live in the Southern Hemisphere. Polar bears are the ones in the Arctic."],
+["A giraffe has 7 neck bones, same as a human.",true,"Almost all mammals have 7 neck vertebrae. A giraffe's are just really long."],
+["Mars is red because of rust.",true,"Its soil is full of iron oxide, which is rust."],
+["Your eyes see the world upside down before your brain flips it.",true,"The image lands inverted on the retina and the brain corrects it automatically."],
+["Gold is the most expensive metal in the world.",false,"Metals like rhodium cost far more, and platinum has often been pricier than gold too."],
+["Lightning is hotter than the surface of the Sun.",true,"A lightning channel reaches about 30,000°C. The Sun's surface is about 5,500°C."],
+["Termites are a type of ant.",false,"Termites are actually closer to cockroaches. They just look and act similar."],
+["Bats are the only mammals that can truly fly.",true,"Flying squirrels only glide. Bats are the only ones that flap and fly."],
+["In Arabic, every letter connects to the next letter in a word.",false,"Six letters (ا د ذ ر ز و) never connect to the letter after them."],
+["Humans and dinosaurs lived at the same time.",false,"Non-bird dinosaurs died out about 66 million years ago. Humans showed up only a few hundred thousand years ago."],
+["Cats always land on their feet.",false,"They usually flip themselves in time, but not always. Falls from low heights or high up can still cause injuries."],
+["Glass is a slow-flowing liquid, which is why old windows are thicker at the bottom.",false,"Glass is a solid. Old panes were made unevenly and installed with the thick side down."],
+["Chameleons change color mainly to hide.",false,"They mostly change color to show mood, regulate temperature, and communicate."]
+]};
+const I18N={en:{tag:"True or Myth?",intro:"Stuff you're sure about, but it's wrong.<br>10 statements a round. Tap No Cap if it's true, Cap if it's a myth.",best:"Best score",streak:"Best streak",play:"Let's go",nocap:"No Cap (True)",cap:"Cap (Myth)",yours:"Your score",share:"Share on WhatsApp",again:"Play again",next:"Next",results:"See results",
+oks:["Correct! 🔥","Big brain 🧠","Nailed it 😎","Too easy 💪","Not a single miss!"],bads:["Got you 😅","Everyone falls for that one","Nope, nice try 🙈","Cap! You got played"],
+isTrue:"It's true.",isMyth:"It's a myth.",
+ranks:[["Legend 👑","10 out of 10. Nobody fools you."],["Big brain 🧠","Clean run. Go for the perfect 10 next time."],["Not bad 👍","Solid, but some myths still fool you."],["Still believing everything 😅","Try again. You'll learn stuff to tell your friends."],["The myths won 💀","Don't sweat it. Run it back."]],
+share1:"I got {s}/10 on Cap or No Cap 🔥",share2:"Best streak: {k}",share3:"Think you can beat me? 😏"}};
+const LANG="en";const T=I18N[LANG];const QS=QUESTIONS[LANG];
+document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=T[e.dataset.i]);
+const $=id=>document.getElementById(id);
+const ROUND=10;
+const store={get(k){try{return +localStorage.getItem(k)||0}catch(e){return 0}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let pool=[],cur=0,score=0,streak=0,maxStreak=0,list=[],locked=false;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
+function home(){$('h-best').textContent=store.get('best');$('h-streak').textContent=store.get('streak');show('s-home')}
+function start(){
+  if(pool.length<ROUND)pool=shuffle(QS);
+  list=pool.splice(0,ROUND);cur=0;score=0;streak=0;maxStreak=0;show('s-game');load();
+}
+function load(){
+  locked=false;const [t]=list[cur];
+  $('q').textContent=t;$('g-n').textContent=(cur+1)+'/'+ROUND;$('g-streak').textContent=streak;$('g-score').textContent=score;
+  $('g-bar').style.width=(cur/ROUND*100)+'%';
+  const c=$('card');c.className='card pop';
+  $('fb').classList.add('hidden');$('answers').classList.remove('hidden');
+}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function answer(v){
+  if(locked)return;locked=true;
+  const [,truth,why]=list[cur];const ok=v===truth;
+  if(ok){score++;streak++;maxStreak=Math.max(maxStreak,streak)}else streak=0;
+  const c=$('card');c.className='card '+(ok?'ok pop':'bad shake');
+  if(navigator.vibrate)navigator.vibrate(ok?30:[60,40,60]);
+  $('fb-t').textContent=(ok?pick(T.oks):pick(T.bads))+' '+(truth?T.isTrue:T.isMyth);
+  $('fb-p').textContent=why;
+  $('g-streak').textContent=streak;$('g-score').textContent=score;
+  $('answers').classList.add('hidden');$('fb').classList.remove('hidden');
+  $('next').textContent=cur===ROUND-1?T.results:T.next;
+}
+function next(){cur++;if(cur>=ROUND)end();else load()}
+function rank(s){return T.ranks[s===10?0:s>=8?1:s>=6?2:s>=4?3:4]}
+function end(){
+  const best=Math.max(store.get('best'),score),ms=Math.max(store.get('streak'),maxStreak);
+  store.set('best',best);store.set('streak',ms);
+  const [r,m]=rank(score);
+  $('e-score').textContent=score;$('e-rank').textContent=r;$('e-msg').textContent=m;
+  $('e-streak').textContent=maxStreak;$('e-best').textContent=best;show('s-end');
+}
+function shareText(){
+  const url=location.href.split('#')[0].split('?')[0];
+  return [T.share1.replace('{s}',score),T.share2.replace('{k}',maxStreak),T.share3,url].join('\n');
+}
+async function share(){
+  const t=shareText();
+  if(navigator.share){try{await navigator.share({text:t});return}catch(e){if(e&&e.name==='AbortError')return}}
+  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');
+}
+$('play').onclick=start;$('again').onclick=start;$('next').onclick=next;$('share').onclick=share;
+$('b-true').onclick=()=>answer(true);$('b-false').onclick=()=>answer(false);
+home();
+</script></body></html>
