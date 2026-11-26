@@ -38,7 +38,7 @@ h1{margin:0;font-size:2.4rem;line-height:1.15}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
 .fb{margin-top:16px;min-height:120px;text-align:center}
-.fb h2{margin:0 0 6px;font-size:1.5rem}
+.fb h2{margin:0 0 6px;font-size:1.5rem;white-space:pre-line;line-height:1.4}
 .fb p{margin:0 0 14px;line-height:1.7;opacity:.92}
 .big{font-size:4.5rem;font-weight:900;color:#ffd23f}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
@@ -150,7 +150,7 @@ const QUESTIONS={en:[
 ["Chameleons change color mainly to hide.",false,"They mostly change color to show mood, regulate temperature, and communicate."]
 ]};
 const I18N={en:{tag:"True or Myth?",intro:"Stuff you're sure about, but it's wrong.<br>10 statements a round. Tap No Cap if it's true, Cap if it's a myth.",best:"Best score",streak:"Best streak",play:"Let's go",nocap:"No Cap (True)",cap:"Cap (Myth)",yours:"Your score",share:"Share on WhatsApp",again:"Play again",next:"Next",results:"See results",
-oks:["Correct! 🔥","Big brain 🧠","Nailed it 😎","Too easy 💪","Not a single miss!"],bads:["Got you 😅","Everyone falls for that one","Nope, nice try 🙈","Cap! You got played"],
+oks:["Correct! 🔥","Big brain 🧠","Nailed it 😎","Too easy 💪","Boom! 🎯"],bads:["Got you 😅","Everyone falls for that one","Nope, nice try 🙈","Played! 🎭"],
 isTrue:"It's true.",isMyth:"It's a myth.",
 ranks:[["Legend 👑","10 out of 10. Nobody fools you."],["Big brain 🧠","Clean run. Go for the perfect 10 next time."],["Not bad 👍","Solid, but some myths still fool you."],["Still believing everything 😅","Try again. You'll learn stuff to tell your friends."],["The myths won 💀","Don't sweat it. Run it back."]],
 share1:"I got {s}/10 on Cap or No Cap 🔥",share2:"Best streak: {k}",share3:"Think you can beat me? 😏"}};
@@ -181,7 +181,7 @@ function answer(v){
   if(ok){score++;streak++;maxStreak=Math.max(maxStreak,streak)}else streak=0;
   const c=$('card');c.className='card '+(ok?'ok pop':'bad shake');
   if(navigator.vibrate)navigator.vibrate(ok?30:[60,40,60]);
-  $('fb-t').textContent=(ok?pick(T.oks):pick(T.bads))+' '+(truth?T.isTrue:T.isMyth);
+  $('fb-t').textContent=(ok?pick(T.oks):pick(T.bads))+'\n'+(truth?T.isTrue:T.isMyth);
   $('fb-p').textContent=why;
   $('g-streak').textContent=streak;$('g-score').textContent=score;
   $('answers').classList.add('hidden');$('fb').classList.remove('hidden');
